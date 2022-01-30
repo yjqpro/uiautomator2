@@ -1394,7 +1394,7 @@ class _AppMixIn:
             time.sleep(.5)
         return False
 
-    def app_start(self, package_name: str, activity: Optional[str] = None, wait: bool = False, stop: bool = False, use_monkey: bool = False):
+    def app_start(self, package_name: str, activity: Optional[str] = None, wait: bool = False, stop: bool = False, use_monkey: bool = False, user: Optional[str] = None):
         """ Launch application
         Args:
             package_name (str): package name
@@ -1429,11 +1429,18 @@ class _AppMixIn:
         # -e <EXTRA_KEY> <EXTRA_STRING_VALUE>
         # --ei <EXTRA_KEY> <EXTRA_INT_VALUE>
         # --ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>
-        args = [
-            'am', 'start', '-a', 'android.intent.action.MAIN', '-c',
-            'android.intent.category.LAUNCHER',
-            '-n', f'{package_name}/{activity}'
-        ]
+        if not user:
+            args = [
+                'am', 'start', '-a', 'android.intent.action.MAIN', '-c',
+                'android.intent.category.LAUNCHER',
+                '-n', f'{package_name}/{activity}'
+            ]
+        else:
+            args = [
+                'am', 'start', '--user', user, '-a', 'android.intent.action.MAIN', '-c',
+                'android.intent.category.LAUNCHER',
+                '-n', f'{package_name}/{activity}'
+            ]
         self.shell(args)
 
         if wait:
